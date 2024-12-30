@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use NotificationChannels\Telegram\TelegramMessage;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Models\CaHistory;
 
 class MoonshotController extends Controller
 {
@@ -19,9 +20,9 @@ class MoonshotController extends Controller
             {
                 $created_at = Carbon::parse($data['createdAt']/1000);
                 $message = TelegramMessage::create()
-                    ->to('-1002294440653')
-                    // ->line($data['baseToken']['name'].' | *'.$data['baseToken']['symbol'].'* | '.abs(round(now()->diffInSeconds($created_at),0)).'s')
-                    // ->line('[DEX]('.$data['url'].')')
+                    ->to(config('services.telegram-bot-api.chat_id'))
+                    ->line($data['baseToken']['name'].' | *'.$data['baseToken']['symbol'].'* | '.abs(round(now()->diffInSeconds($created_at),0)).'s')
+                    ->line('[DEX]('.$data['url'].')')
                     ->line('')
                     ->line($this->numberFormat($data['moonshot']['progress']).'% $'.$this->numberFormat($data['marketCap']))
                     ->line('')
@@ -38,15 +39,16 @@ class MoonshotController extends Controller
                 }
                 $message->line('');
 
-                $message->line($created_at->addHours(8)->format('Y-m-d H:i:s'). ' GMT+8')
+                $message->line($created_at->addHours(8)->format('Y-m-d H:i:s').' (GMT+8)')
+                    ->options([
+                        'disable_web_page_preview' => true,
+                    ])
                     ->send();
-            }
 
-            dd($data);
-        }
-        else
-        {
-            dd('false');
+                $model = new CaHistory;
+                $model->ca = $data['baseToken']['address'];
+                $model->save();
+            }
         }
     }
 
@@ -56,8 +58,12 @@ class MoonshotController extends Controller
         $response = Http::timeout(3)->get('https://api.moonshot.cc/tokens/v1/new/solana');
         if ($response->successful())
         {
-            $collection = collect($response->json());
-            return $collection->filter(fn($row, $i) => $i =='0');
+            $collection = collect($response->json())->filter(function($row){
+                return now()->timestamp - $row['createdAt']/1000 <= 120;
+            });
+            return $collection->filter(function($row){
+                return CaHistory::where('ca', $row['baseToken']['address'])->first() == null;
+            });
         }
         return false;
     }
