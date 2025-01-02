@@ -78,7 +78,7 @@ class MoonshotController extends Controller
                         ->line('Boots amount: '.$data['amount'])
                         ->line('Total amount: '.$data['totalAmount'])
                         ->line('')
-                        ->line(now()->addHours(8)->format('Y-m-d H:i:s').' (GMT+8)')
+                        ->line(now()->format('Y-m-d H:i:s').' (GMT+8)')
                         ->options([
                             'disable_web_page_preview' => true,
                         ])
