@@ -78,7 +78,18 @@ class MoonshotController extends Controller
                         ->line('Boots amount: '.$data['amount'])
                         ->line('Total amount: '.$data['totalAmount'])
                         ->line('')
-                        ->line(now()->format('Y-m-d H:i:s').' (GMT+8)')
+                        ->line('*Social:*');
+                    
+                    if (isset($token['profile']['links']) && count($token['profile']['links']))
+                    {
+                        foreach($token['profile']['links'] as $link)
+                        {
+                            $message->line('['.$link.']('.$link.')');
+                        }
+                    }
+                    $message->line('');
+                    
+                    $message->line(now()->format('Y-m-d H:i:s').' (GMT+8)')
                         ->options([
                             'disable_web_page_preview' => true,
                         ])
