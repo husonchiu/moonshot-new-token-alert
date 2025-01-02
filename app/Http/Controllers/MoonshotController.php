@@ -34,7 +34,7 @@ class MoonshotController extends Controller
                 {
                     foreach($data['profile']['links'] as $link)
                     {
-                        $message->line($link);
+                        $message->line('['.$link.']('.$link.')');
                     }
                 }
                 $message->line('');
