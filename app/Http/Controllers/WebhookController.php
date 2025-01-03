@@ -85,6 +85,16 @@ class WebhookController extends Controller
                 $message->line('Count: '.$count)->send();
             }
 
+            if ($text === '/delete')
+            {
+                $exist = TokenTrade::first();
+                if ($exist)
+                {
+                    $exist->delete();
+                }
+                $message->line('Token deleted.')->send();
+            }
+
             \Log::info($updates);
         }
 
