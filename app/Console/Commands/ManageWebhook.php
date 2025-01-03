@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class ManageWebhook extends Command
 {
@@ -26,8 +26,8 @@ class ManageWebhook extends Command
      */
     public function handle()
     {
-        // set webhook
-        $response = Http::post('https://api.telegram.org/bot'.config('services.telegram-bot-api.token').'/setWebhook?url='.route('webhook', ['token' => config('services.telegram-bot-api.token')]));
+        Telegram::removeWebhook();
+        $response = Telegram::setWebhook(['url' => route('webhook', ['token' => config('services.telegram-bot-api.token')])]);
         dd($response);
     }
 }
