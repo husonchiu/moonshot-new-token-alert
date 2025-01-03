@@ -30,7 +30,11 @@ class WebhookController extends Controller
                 $token = TokenTrade::first();
                 if ($token)
                 {
-
+                    $message
+                        ->line($token->name.' | *'.$token->symbol.'*')
+                        ->line('')
+                        ->line('CA: `'.$token->ca.'`')
+                        ->send();
                 }
                 else
                 {
