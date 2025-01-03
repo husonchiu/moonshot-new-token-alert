@@ -53,6 +53,12 @@ class WebhookController extends Controller
                         $data = $response->json();
                         if (!isset($data['error']))
                         {
+                            $exist = TokenTrade::first();
+                            if ($exist)
+                            {
+                                $exist->delete();
+                            }
+
                             $model = new TokenTrade;
                             $model->ca = $data['baseToken']['address'];
                             $model->creator = $data['moonshot']['creator'];
