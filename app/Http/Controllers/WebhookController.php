@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use App\Models\TokenTrade;
 use NotificationChannels\Telegram\TelegramMessage;
+use Illuminate\Support\Str;
 
 class WebhookController extends Controller
 {
@@ -35,6 +36,34 @@ class WebhookController extends Controller
                     $message->line('No Token.')->send();
                 }
             }
+
+            if (Str::startsWith($text, '/set '))
+            {
+                $token = Str::of($text)->after($text)->trim();
+                if ($token)
+                {
+                    $response = Http::timeout(3)->get('https://api.moonshot.cc/token/v1/solana/'.$token);
+                    if ($response->successful())
+                    {
+                        $data = $response->json();
+                        if (!isset($data['error']))
+                        {
+                            $model = new TokenTrade;
+                            $model->ca = $data['baseToken']['address'];
+                            $model->creator = $data['moonshot']['creator'];
+                            $model->name = $data['baseToken']['name'];
+                            $model->symbol = $data['baseToken']['symbol'];
+                            $model->save();
+                            $message->line('Token set successfully.')->send();
+                        }
+                        else
+                        {
+                            $message->line('Token `'.$token.'` not found.')->send();
+                        }
+                    }
+                }
+            }
+
             \Log::info($updates);
         }
 
