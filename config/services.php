@@ -38,6 +38,8 @@ return [
     'telegram-bot-api' => [
         'token' => env('TELEGRAM_BOT_TOKEN', 'bot_token'),
         'chat_id' => env('TELEGRAM_CHAT_ID', 'chat_id'),
+        'topic_id_new_token' => env('TELEGRAM_TOPIC_NEWTOKEN', 'topic_id_new_token'),
+        'topic_id_token_boosts' => env('TELEGRAM_TOPIC_TOKENBOOSTS', 'topic_id_token_boosts'),
     ],
 
 ];
