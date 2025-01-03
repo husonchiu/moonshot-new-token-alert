@@ -58,6 +58,7 @@ class MoonshotController extends Controller
     public function token_boosts()
     {
         $datas = $this->getTokenBoosts();
+        dd($datas);
         if ($datas !== false)
         {
             foreach($datas as $data)
@@ -142,7 +143,7 @@ class MoonshotController extends Controller
                     }
                 }
                 return true;
-            });
+            })->unique('tokenAddress');
         }
         return false;
     }
