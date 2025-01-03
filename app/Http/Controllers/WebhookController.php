@@ -59,8 +59,12 @@ class WebhookController extends Controller
                         }
                         else
                         {
-                            $message->line('Token `'.$token.'` not found.')->send();
+                            $message->line('Token not found.')->send();
                         }
+                    }
+                    else
+                    {
+                        $message->line('Token not found.')->send();
                     }
                 }
             }
