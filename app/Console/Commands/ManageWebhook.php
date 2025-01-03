@@ -28,6 +28,5 @@ class ManageWebhook extends Command
     {
         Telegram::removeWebhook();
         $response = Telegram::setWebhook(['url' => route('webhook', ['token' => config('services.telegram-bot-api.token')])]);
-        dd($response);
     }
 }

@@ -40,6 +40,7 @@ return [
         'chat_id' => env('TELEGRAM_CHAT_ID', 'chat_id'),
         'topic_id_new_token' => env('TELEGRAM_TOPIC_NEWTOKEN', 'topic_id_new_token'),
         'topic_id_token_boosts' => env('TELEGRAM_TOPIC_TOKENBOOSTS', 'topic_id_token_boosts'),
+        'topic_id_token_trade' => env('TELEGRAM_TOPIC_TOKENTRADE', 'topic_id_token_trade'),
     ],
 
 ];

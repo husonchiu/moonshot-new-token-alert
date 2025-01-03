@@ -40,7 +40,6 @@ return [
              */
             'allowed_updates' => null,
             'commands' => [
-                App\Telegram\Commands\TokenTrade\Show::class,
                 //Acme\Project\Commands\MyTelegramBot\BotCommand::class
             ],
         ],
