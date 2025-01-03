@@ -10,6 +10,7 @@ class WebhookController extends Controller
     public function index($token)
     {
         $updates = Telegram::getWebhookUpdate();
+        \Log::info($updates);
 
         return 'ok';
     }
