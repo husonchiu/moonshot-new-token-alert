@@ -79,6 +79,12 @@ class WebhookController extends Controller
                 }
             }
 
+            if ($text === '/count')
+            {
+                $count = TokenTrade::get()->count();
+                $message->line('Count: '.$count)->send();
+            }
+
             \Log::info($updates);
         }
 
