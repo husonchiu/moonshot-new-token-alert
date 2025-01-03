@@ -58,7 +58,6 @@ class MoonshotController extends Controller
     public function token_boosts()
     {
         $datas = $this->getTokenBoosts();
-        dd($datas);
         if ($datas !== false)
         {
             foreach($datas as $data)
