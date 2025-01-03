@@ -40,7 +40,7 @@ class WebhookController extends Controller
 
             if (Str::startsWith($text, '/set '))
             {
-                $token = Str::of($text)->after($text)->trim();
+                $token = Str::of($text)->after('/set ')->trim();
                 if ($token)
                 {
                     $response = Http::timeout(3)->get('https://api.moonshot.cc/token/v1/solana/'.$token);
