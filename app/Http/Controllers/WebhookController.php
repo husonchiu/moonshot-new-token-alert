@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use NotificationChannels\Telegram\TelegramUpdates;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class WebhookController extends Controller
 {
     public function index($token)
     {
-        $updates = TelegramUpdates::create()->limit(2)->get();
-        \Log::info($updates);
+        $updates = Telegram::getWebhookUpdate();
 
         return 'ok';
     }
