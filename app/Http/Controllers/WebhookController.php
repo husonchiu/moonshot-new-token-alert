@@ -7,6 +7,7 @@ use Telegram\Bot\Laravel\Facades\Telegram;
 use App\Models\TokenTrade;
 use NotificationChannels\Telegram\TelegramMessage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 
 class WebhookController extends Controller
 {
