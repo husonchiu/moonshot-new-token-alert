@@ -136,7 +136,7 @@ class MoonshotController extends Controller
                 $model = TokenBoost::where('ca', $row['tokenAddress'])->first();
                 if ($model)
                 {
-                    if ($model->total_amount == $row['totalAmount'] && $model->amount == $row['amount'])
+                    if ($model->total_amount == $row['totalAmount'])
                     {
                         return false;
                     }
