@@ -47,11 +47,18 @@ class WebhookController extends Controller
                 $token = Str::of($text)->after('/set ')->trim();
                 if ($token)
                 {
-                    $response = Http::timeout(3)->get('https://api.moonshot.cc/token/v1/solana/'.$token);
+                    $response = Http::timeout(3)->get('https://api.dexscreener.com/latest/dex/tokens/'.$token);
                     if ($response->successful())
                     {
-                        $data = $response->json();
-                        if (!isset($data['error']))
+                        $datas = $response->json();
+                        $datas = collect($datas['pairs']);
+                        $data = $datas->where('dexId', 'raydium')->first();
+                        if ($datas == null)
+                        {
+                            $data = $datas->where('dexId', 'moonshot')->first();
+                        }
+
+                        if ($data != null && !isset($data['error']))
                         {
                             $exist = TokenTrade::first();
                             if ($exist)
@@ -61,7 +68,7 @@ class WebhookController extends Controller
 
                             $model = new TokenTrade;
                             $model->ca = $data['baseToken']['address'];
-                            $model->creator = $data['moonshot']['creator'];
+                            $model->creator = isset($data['moonshot']) ? $data['moonshot']['creator'] : 'no';
                             $model->name = $data['baseToken']['name'];
                             $model->symbol = $data['baseToken']['symbol'];
                             $model->save();
