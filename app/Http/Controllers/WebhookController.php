@@ -53,7 +53,7 @@ class WebhookController extends Controller
                         $datas = $response->json();
                         $datas = collect($datas['pairs']);
                         $data = $datas->where('dexId', 'raydium')->first();
-                        if ($datas == null)
+                        if ($data == null)
                         {
                             $data = $datas->where('dexId', 'moonshot')->first();
                         }
