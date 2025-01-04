@@ -60,7 +60,7 @@ class TokenTrade extends Command
                         ->line('USD: '.$trade['volumeUsd'])
                         ->line('')
                         ->line('MC: '.(number_format(1000000000 * $trade['priceUsd'], 2, '.', ',')))
-                        ->lineIf(isset($trade['metadata']) ,'Progress: '.$trade['metadata']['progress'].'%')
+                        ->lineIf(isset($trade['metadata']), 'Progress: '.$trade['metadata']['progress'].'%')
                         ->send();
 
                     $model = new TokenTradeHistory;
