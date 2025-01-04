@@ -37,7 +37,7 @@ class TokenTrade extends Command
             {
                 $now = now()->timestamp;
                 $trades = collect($response->json())->filter(function($row)use($now){
-                    return $now - $row['blockTimestamp'] <= 5;
+                    return $now - $row['blockTimestamp'] <= 10;
                 })->filter(function($row){
                     return TokenTradeHistory::where('txn_id', $row['txnId'])->first() == null;
                 })->reverse();
