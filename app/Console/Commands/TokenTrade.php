@@ -44,33 +44,36 @@ class TokenTrade extends Command
 
                 foreach($trades as $trade)
                 {
-                    $message = TelegramMessage::create()
-                        ->to(config('services.telegram-bot-api.chat_id'))
-                        ->options([
-                            'disable_web_page_preview' => true,
-                            'reply_to_message_id' => config('services.telegram-bot-api.topic_id_token_trade'),
-                        ])
-                        ->lineIf($token['creator'] == $trade['maker'],'🚨🚨🚨 Creator 🚨🚨🚨')
-                        ->lineIf($trade['type'] == 'buy', '💚'.strtoupper($trade['type']))
-                        ->lineIf($trade['type'] == 'sell', '❤️'.strtoupper($trade['type']))
-                        ->line('')
-                        ->line($token->name.' | *'.$token->symbol.'*')
-                        ->line('')
-                        ->line('SOL: '.$trade['amount1'])
-                        ->line('USD: '.$trade['volumeUsd'])
-                        ->line('')
-                        ->line('MC: '.(number_format(1000000000 * $trade['priceUsd'], 2, '.', ',')));
-
-                    if (isset($trade['metadata']))
+                    if (TokenTradeHistory::where('txn_id', $trade['txnId'])->first() == null)
                     {
-                        $message->line('Progress: '.$trade['metadata']['progress'].'%');
+                        $message = TelegramMessage::create()
+                            ->to(config('services.telegram-bot-api.chat_id'))
+                            ->options([
+                                'disable_web_page_preview' => true,
+                                'reply_to_message_id' => config('services.telegram-bot-api.topic_id_token_trade'),
+                            ])
+                            ->lineIf($token['creator'] == $trade['maker'],'🚨🚨🚨 Creator 🚨🚨🚨')
+                            ->lineIf($trade['type'] == 'buy', '💚'.strtoupper($trade['type']))
+                            ->lineIf($trade['type'] == 'sell', '❤️'.strtoupper($trade['type']))
+                            ->line('')
+                            ->line($token->name.' | *'.$token->symbol.'*')
+                            ->line('')
+                            ->line('SOL: '.$trade['amount1'])
+                            ->line('USD: '.$trade['volumeUsd'])
+                            ->line('')
+                            ->line('MC: '.(number_format(1000000000 * $trade['priceUsd'], 2, '.', ',')));
+    
+                        if (isset($trade['metadata']))
+                        {
+                            $message->line('Progress: '.$trade['metadata']['progress'].'%');
+                        }
+                            
+                            $message->send();
+    
+                        $model = new TokenTradeHistory;
+                        $model->txn_id = $trade['txnId'];
+                        $model->save();
                     }
-                        
-                        $message->send();
-
-                    $model = new TokenTradeHistory;
-                    $model->txn_id = $trade['txnId'];
-                    $model->save();
                 }
             }
         }
