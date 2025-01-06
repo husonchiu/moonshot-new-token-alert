@@ -62,18 +62,31 @@ class MoonshotController extends Controller
         {
             foreach($datas as $data)
             {
-                $created_at = Carbon::parse($data['createdAt']/1000);
-                $response = Http::timeout(3)->get('https://api.moonshot.cc/token/v1/solana/'.$data['tokenAddress']);
+                $response = Http::timeout(3)->get('https://api.dexscreener.com/latest/dex/tokens/'.$data['tokenAddress']);
                 if ($response->successful())
                 {
-                    $token = $response->json();
+                    $json = $response->json();
+                    $json = collect($json['pairs']);
+                    $token = $json->where('dexId', 'raydium')->first();
+                    if ($token == null)
+                    {
+                        $token = $json->where('dexId', 'moonshot')->first();
+                    }
+                    $created_at = Carbon::parse($token['pairCreatedAt']/1000);
                     $message = TelegramMessage::create()
                         ->to(config('services.telegram-bot-api.chat_id'))
                         ->line('*TOKEN BOOST*')
                         ->line($token['baseToken']['name'].' | *'.$token['baseToken']['symbol'].'* | 🌱'.$created_at->diffForHumans(now(), 1, true))
                         ->line('[DEX]('.$token['url'].')')
-                        ->line('')
-                        ->line($this->numberFormat($token['moonshot']['progress']).'% $'.$this->numberFormat($token['marketCap']))
+                        ->line('');
+
+                    if (isset($token['moonshot']))
+                    {
+                        $message->line('Progress: '.$this->numberFormat($token['moonshot']['progress']).'%');
+                    }
+
+                    $message
+                        ->line('FDV: $'.$this->numberFormat($token['fdv']))
                         ->line('')
                         ->line('`'.$token['baseToken']['address'].'`')
                         ->line('')
@@ -82,11 +95,11 @@ class MoonshotController extends Controller
                         ->line('')
                         ->line('*Social:*');
                     
-                    if (isset($token['profile']['links']) && count($token['profile']['links']))
+                    if (isset($token['info']['socials']) && count($token['info']['socials']))
                     {
-                        foreach($token['profile']['links'] as $link)
+                        foreach($token['info']['socials'] as $row)
                         {
-                            $message->line('['.$link.']('.$link.')');
+                            $message->line('['.$row['url'].']('.$row['url'].')');
                         }
                     }
                     $message->line('');
@@ -131,7 +144,7 @@ class MoonshotController extends Controller
         if ($response->successful())
         {
             $collection = collect($response->json())->filter(function($row){
-                return $row['chainId'] == 'solana' && Str::endsWith($row['tokenAddress'], 'moon');
+                return $row['chainId'] == 'solana';
             });
             return $collection->filter(function($row){
                 $model = TokenBoost::where('ca', $row['tokenAddress'])->first();
