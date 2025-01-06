@@ -56,7 +56,7 @@ class TokenTrade extends Command
                             ->lineIf($trade['type'] == 'buy', '💚'.strtoupper($trade['type']))
                             ->lineIf($trade['type'] == 'sell', '❤️'.strtoupper($trade['type']))
                             ->line('')
-                            ->escapedLine($token->name.' | *'.$token->symbol.'*')
+                            ->escapedLine($token->name.' | '.$token->symbol.'')
                             ->line('')
                             ->line('SOL: '.$trade['amount1'])
                             ->line('USD: '.$trade['volumeUsd'])
