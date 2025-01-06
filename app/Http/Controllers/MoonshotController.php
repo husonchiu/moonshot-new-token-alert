@@ -99,7 +99,7 @@ class MoonshotController extends Controller
                     {
                         foreach($token['info']['socials'] as $row)
                         {
-                            $message->line('['.$row['url'].']('.$row['url'].')');
+                            $message->line('['.$row['type'].']('.$row['url'].')');
                         }
                     }
                     $message->line('');
