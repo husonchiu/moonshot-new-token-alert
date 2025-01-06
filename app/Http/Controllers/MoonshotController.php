@@ -22,7 +22,7 @@ class MoonshotController extends Controller
                 $created_at = Carbon::parse($data['createdAt']/1000);
                 $message = TelegramMessage::create()
                     ->to(config('services.telegram-bot-api.chat_id'))
-                    ->line($data['baseToken']['name'].' | *'.$data['baseToken']['symbol'].'* | 🌱'.$created_at->diffForHumans(now(), 1))
+                    ->line($data['baseToken']['name'].' | *'.$data['baseToken']['symbol'].'* | 🌱'.$created_at->diffForHumans(now(), 1, true))
                     ->line('[DEX]('.$data['url'].')')
                     ->line('')
                     ->line($this->numberFormat($data['moonshot']['progress']).'% $'.$this->numberFormat($data['marketCap']))
@@ -70,7 +70,7 @@ class MoonshotController extends Controller
                     $message = TelegramMessage::create()
                         ->to(config('services.telegram-bot-api.chat_id'))
                         ->line('*TOKEN BOOST*')
-                        ->line($token['baseToken']['name'].' | *'.$token['baseToken']['symbol'].'* | 🌱'.$created_at->diffForHumans())
+                        ->line($token['baseToken']['name'].' | *'.$token['baseToken']['symbol'].'* | 🌱'.$created_at->diffForHumans(now(), 1, true))
                         ->line('[DEX]('.$token['url'].')')
                         ->line('')
                         ->line($this->numberFormat($token['moonshot']['progress']).'% $'.$this->numberFormat($token['marketCap']))
