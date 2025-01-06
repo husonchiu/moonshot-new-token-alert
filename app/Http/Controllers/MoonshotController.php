@@ -133,7 +133,7 @@ class MoonshotController extends Controller
             });
             return $collection->filter(function($row){
                 return CaHistory::where('ca', $row['baseToken']['address'])->first() == null;
-            });
+            })->reverse();
         }
         return false;
     }
@@ -156,7 +156,7 @@ class MoonshotController extends Controller
                     }
                 }
                 return true;
-            })->unique('tokenAddress');
+            })->unique('tokenAddress')->reverse();
         }
         return false;
     }
