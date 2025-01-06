@@ -22,7 +22,7 @@ class MoonshotController extends Controller
                 $created_at = Carbon::parse($data['createdAt']/1000);
                 $message = TelegramMessage::create()
                     ->to(config('services.telegram-bot-api.chat_id'))
-                    ->line($data['baseToken']['name'].' | *'.$data['baseToken']['symbol'].'* | '.abs(round(now()->diffInSeconds($created_at),0)).'s')
+                    ->line($data['baseToken']['name'].' | *'.$data['baseToken']['symbol'].'* | 🌱'.abs(round(now()->diffInSeconds($created_at),0)).'s')
                     ->line('[DEX]('.$data['url'].')')
                     ->line('')
                     ->line($this->numberFormat($data['moonshot']['progress']).'% $'.$this->numberFormat($data['marketCap']))
