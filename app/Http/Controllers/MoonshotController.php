@@ -169,6 +169,6 @@ class MoonshotController extends Controller
 
     function escapeMarkdown($string)
     {
-        return addcslashes($string, '*,_,\\');
+        return addcslashes($string, '*,_,\\,#,~,|,[,],(,),{,},?,/,`,<,>,/');
     }
 }
