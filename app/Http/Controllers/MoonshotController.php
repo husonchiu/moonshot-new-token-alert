@@ -107,7 +107,7 @@ class MoonshotController extends Controller
                     $message->line(now()->format('Y-m-d H:i:s').' (GMT+8)')
                         ->options([
                             'disable_web_page_preview' => true,
-                            'reply_to_message_id' => config('services.telegram-bot-api.topic_id_token_boosts'),
+                            'reply_to_message_id' => Str::endsWith($token['baseToken']['address'], 'moon') ? config('services.telegram-bot-api.topic_id_token_boosts') : config('services.telegram-bot-api.topic_id_token_boosts_other'),
                         ])
                         ->button('BONKbot', 'https://t.me/bonkbot_bot?start=ref_lz8ym_ca_'.$token['baseToken']['address'])
                         ->send();

@@ -41,6 +41,7 @@ return [
         'topic_id_new_token' => env('TELEGRAM_TOPIC_NEWTOKEN', 'topic_id_new_token'),
         'topic_id_token_boosts' => env('TELEGRAM_TOPIC_TOKENBOOSTS', 'topic_id_token_boosts'),
         'topic_id_token_trade' => env('TELEGRAM_TOPIC_TOKENTRADE', 'topic_id_token_trade'),
+        'topic_id_token_boosts_other' => env('TELEGRAM_TOPIC_TOKENBOOSTS_OTHER', 'topic_id_token_boosts_other'),
     ],
 
 ];
