@@ -72,6 +72,8 @@ class MoonshotController extends Controller
                     {
                         $token = $json->where('dexId', 'moonshot')->first();
                     }
+
+                    \Log::info($token);
                     $created_at = Carbon::parse($token['pairCreatedAt']/1000);
                     $message = TelegramMessage::create()
                         ->to(config('services.telegram-bot-api.chat_id'))
@@ -99,7 +101,7 @@ class MoonshotController extends Controller
                     {
                         foreach($token['info']['socials'] as $row)
                         {
-                            // $message->line('['.$row['type'].']('.$row['url'].')');
+                            $message->line('['.$row['type'].']('.$row['url'].')');
                         }
                     }
                     $message->line('');
