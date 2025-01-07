@@ -83,7 +83,7 @@ class MoonshotController extends Controller
                             ->line('[DEX]('.$token['url'].')')
                             ->line('');
     
-                        if (isset($token['moonshot']))
+                        if (isset($token['moonshot']) && isset($token['moonshot']['progress']))
                         {
                             $message->line('Progress: '.$this->numberFormat($token['moonshot']['progress']).'%');
                         }
