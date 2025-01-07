@@ -73,51 +73,54 @@ class MoonshotController extends Controller
                         $token = $json->where('dexId', 'moonshot')->first();
                     }
 
-                    $created_at = Carbon::parse($token['pairCreatedAt']/1000);
-                    $message = TelegramMessage::create()
-                        ->to(config('services.telegram-bot-api.chat_id'))
-                        ->line('*TOKEN BOOST*')
-                        ->escapedLine($token['baseToken']['name'].' | '.$token['baseToken']['symbol'].' | 🌱'.$created_at->diffForHumans(now(), 1, true))
-                        ->line('[DEX]('.$token['url'].')')
-                        ->line('');
-
-                    if (isset($token['moonshot']))
+                    if ($token)
                     {
-                        $message->line('Progress: '.$this->numberFormat($token['moonshot']['progress']).'%');
-                    }
-
-                    $message
-                        ->line('FDV: $'.$this->numberFormat($token['fdv']))
-                        ->line('')
-                        ->line('`'.$token['baseToken']['address'].'`')
-                        ->line('')
-                        ->line('Boots amount: '.$data['amount'])
-                        ->line('Total amount: '.$data['totalAmount'])
-                        ->line('')
-                        ->line('*Social:*');
-                    
-                    if (isset($token['info']['socials']) && count($token['info']['socials']))
-                    {
-                        foreach($token['info']['socials'] as $row)
+                        $created_at = Carbon::parse($token['pairCreatedAt']/1000);
+                        $message = TelegramMessage::create()
+                            ->to(config('services.telegram-bot-api.chat_id'))
+                            ->line('*TOKEN BOOST*')
+                            ->escapedLine($token['baseToken']['name'].' | '.$token['baseToken']['symbol'].' | 🌱'.$created_at->diffForHumans(now(), 1, true))
+                            ->line('[DEX]('.$token['url'].')')
+                            ->line('');
+    
+                        if (isset($token['moonshot']))
                         {
-                            $message->line('['.$row['type'].']('.$row['url'].')');
+                            $message->line('Progress: '.$this->numberFormat($token['moonshot']['progress']).'%');
                         }
+    
+                        $message
+                            ->line('FDV: $'.$this->numberFormat($token['fdv']))
+                            ->line('')
+                            ->line('`'.$token['baseToken']['address'].'`')
+                            ->line('')
+                            ->line('Boots amount: '.$data['amount'])
+                            ->line('Total amount: '.$data['totalAmount'])
+                            ->line('')
+                            ->line('*Social:*');
+                        
+                        if (isset($token['info']['socials']) && count($token['info']['socials']))
+                        {
+                            foreach($token['info']['socials'] as $row)
+                            {
+                                $message->line('['.$row['type'].']('.$row['url'].')');
+                            }
+                        }
+                        $message->line('');
+                        
+                        $message->line(now()->format('Y-m-d H:i:s').' (GMT+8)')
+                            ->options([
+                                'disable_web_page_preview' => true,
+                                'reply_to_message_id' => Str::endsWith($token['baseToken']['address'], 'moon') ? config('services.telegram-bot-api.topic_id_token_boosts') : config('services.telegram-bot-api.topic_id_token_boosts_other'),
+                            ])
+                            ->button('BONKbot', 'https://t.me/bonkbot_bot?start=ref_lz8ym_ca_'.$token['baseToken']['address'])
+                            ->send();
+                        
+                        TokenBoost::upsert([
+                            'ca' => $data['tokenAddress'],
+                            'total_amount' => $data['totalAmount'],
+                            'amount' => $data['amount'],
+                        ], uniqueBy: ['ca'], update: ['total_amount', 'amount']);
                     }
-                    $message->line('');
-                    
-                    $message->line(now()->format('Y-m-d H:i:s').' (GMT+8)')
-                        ->options([
-                            'disable_web_page_preview' => true,
-                            'reply_to_message_id' => Str::endsWith($token['baseToken']['address'], 'moon') ? config('services.telegram-bot-api.topic_id_token_boosts') : config('services.telegram-bot-api.topic_id_token_boosts_other'),
-                        ])
-                        ->button('BONKbot', 'https://t.me/bonkbot_bot?start=ref_lz8ym_ca_'.$token['baseToken']['address'])
-                        ->send();
-                    
-                    TokenBoost::upsert([
-                        'ca' => $data['tokenAddress'],
-                        'total_amount' => $data['totalAmount'],
-                        'amount' => $data['amount'],
-                    ], uniqueBy: ['ca'], update: ['total_amount', 'amount']);
                 }
             }
         }
