@@ -19,38 +19,45 @@ class MoonshotController extends Controller
         {
             foreach($datas as $data)
             {
-                $created_at = Carbon::parse($data['createdAt']/1000);
-                $message = TelegramMessage::create()
-                    ->to(config('services.telegram-bot-api.chat_id'))
-                    ->escapedLine($data['baseToken']['name'].' | '.$data['baseToken']['symbol'].' | 🌱'.$created_at->diffForHumans(now(), 1, true))
-                    ->line('[DEX]('.$data['url'].')')
-                    ->line('')
-                    ->line($this->numberFormat($data['moonshot']['progress']).'% $'.$this->numberFormat($data['marketCap']))
-                    ->line('')
-                    ->line('`'.$data['baseToken']['address'].'`')
-                    ->line('')
-                    ->line('*Social:*');
-
-                if (isset($data['profile']['links']) && count($data['profile']['links']))
+                if (isset($data['marketCap']))
                 {
-                    foreach($data['profile']['links'] as $link)
+                    $created_at = Carbon::parse($data['createdAt']/1000);
+                    $message = TelegramMessage::create()
+                        ->to(config('services.telegram-bot-api.chat_id'))
+                        ->escapedLine($data['baseToken']['name'].' | '.$data['baseToken']['symbol'].' | 🌱'.$created_at->diffForHumans(now(), 1, true))
+                        ->line('[DEX]('.$data['url'].')')
+                        ->line('')
+                        ->line($this->numberFormat($data['moonshot']['progress']).'% $'.$this->numberFormat($data['marketCap']))
+                        ->line('')
+                        ->line('`'.$data['baseToken']['address'].'`')
+                        ->line('')
+                        ->line('*Social:*');
+    
+                    if (isset($data['profile']['links']) && count($data['profile']['links']))
                     {
-                        $message->line('['.$link.']('.$link.')');
+                        foreach($data['profile']['links'] as $link)
+                        {
+                            $message->line('['.$link.']('.$link.')');
+                        }
                     }
+                    $message->line('');
+    
+                    $message->line($created_at->addHours(8)->format('Y-m-d H:i:s').' (GMT+8)')
+                        ->options([
+                            'disable_web_page_preview' => true,
+                            'reply_to_message_id' => config('services.telegram-bot-api.topic_id_new_token'),
+                        ])
+                        ->button('BONKbot', 'https://t.me/bonkbot_bot?start=ref_lz8ym_ca_'.$data['baseToken']['address'])
+                        ->send();
+    
+                    $model = new CaHistory;
+                    $model->ca = $data['baseToken']['address'];
+                    $model->save();
                 }
-                $message->line('');
-
-                $message->line($created_at->addHours(8)->format('Y-m-d H:i:s').' (GMT+8)')
-                    ->options([
-                        'disable_web_page_preview' => true,
-                        'reply_to_message_id' => config('services.telegram-bot-api.topic_id_new_token'),
-                    ])
-                    ->button('BONKbot', 'https://t.me/bonkbot_bot?start=ref_lz8ym_ca_'.$data['baseToken']['address'])
-                    ->send();
-
-                $model = new CaHistory;
-                $model->ca = $data['baseToken']['address'];
-                $model->save();
+                else
+                {
+                    \Log::info($data);
+                }
             }
         }
     }
